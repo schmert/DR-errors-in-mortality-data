@@ -1,0 +1,26 @@
+{
+    "id": "36E222F7",
+    "path": "D:/Carl/Documents/GitHub/DR-errors-in-mortality-data/Code/2-construct-Preston-and-Bhat-PI-via-nonlinear-fits-to-group-tables.R",
+    "project_path": "Code/2-construct-Preston-and-Bhat-PI-via-nonlinear-fits-to-group-tables.R",
+    "type": "r_source",
+    "hash": "3127230941",
+    "contents": "",
+    "dirty": false,
+    "created": 1710427257632.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "471,0",
+        "scrollLine": "92"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1704645328,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1704645328,
+    "read_only": false,
+    "read_only_alternatives": []
+}
