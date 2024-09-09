@@ -1,10 +1,10 @@
 #...............................................
 # Carl Schmertmann
 # created 17 Apr 2023
-# updated 13 Mar 2024
+# updated 23 Jul 2024 (DR proof corrections)
 # 
 # main script for producing plots and tables
-# for paper on analytics if age misreporting
+# for paper on analytics of age misreporting
 # and under-registration
 #...............................................
 
@@ -34,7 +34,12 @@ theme_carl <- function () {
       legend.text      = element_text(size=12),
       panel.grid.major = element_line(color='grey75'),
       panel.grid.minor = element_line(color='grey90'),
-      strip.text       = element_text(size=14, face='bold'),
+      strip.text.x     = element_text(size=14, 
+                                      face='bold',
+                                      margin=margin(t=0.1,b=0.1,unit='cm')),
+      strip.text.y     = element_text(size=14, 
+                                      face='bold',angle=-90,
+                                      margin=margin(l=0.1,r=0.1,unit='cm')),
       strip.background = element_rect(fill='grey95')
      )
 }
@@ -49,8 +54,8 @@ INhue = 'turquoise'    # color for Indian age misreporting
 # function to make labels for age misreporting patterns from authors' names
 make_pattern= function(author) {
  factor(author,levels=c('Palloni','Preston','Bhat'),
-               labels=paste(c('Costa Rica','African-American','India'),
-                            'Age Misreporting'))
+               labels=paste(c('Costa Rica','African American','India'),
+                            'age misreporting'))
 }  
   
 
@@ -58,16 +63,16 @@ make_pattern= function(author) {
 # plot list and on/off flags ----
 #...............................................
 
-UNDERREG            = TRUE
-MISREPORT           = TRUE
-DERIVATIVES         = TRUE
-NET_ERRORS          = TRUE
+UNDERREG            = TRUE     # fig 1
+MISREPORT           = TRUE     # fig 2
+DERIVATIVES         = TRUE     # fig 3
+NET_ERRORS          = TRUE     # fig 4
 PXY_PROBS           = TRUE
-COMPARE_MX_BIAS     = TRUE
-COMPARE_EX_BIAS     = TRUE
-COMPARATIVE_EFFECTS = TRUE
-CROSSOVER           = TRUE
-CROSSOVER_ERRORS    = TRUE
+COMPARE_MX_BIAS     = TRUE     # fig 5
+COMPARE_EX_BIAS     = TRUE     # fig 6
+COMPARATIVE_EFFECTS = TRUE     # fig 7
+CROSSOVER           = TRUE     # fig 8
+CROSSOVER_ERRORS    = TRUE     # fig 9
 
 #...............................................
 # get SP data, smooth and extrapolate mx ----
@@ -145,10 +150,14 @@ if (UNDERREG) {
   
   print(G)
   
-  ggsave(here(output_dir,'Fig-underregistration-effects-on-e0.pdf'), plot=G, 
+  ggsave(here(output_dir,'Fig-1-underregistration-effects-on-e0.pdf'), plot=G, 
          height=8, width=8, units='in')
 
+  ggsave(here(output_dir,'Fig-1-underregistration-effects-on-e0.eps'), plot=G, 
+         height=8, width=8, units='in', device=cairo_ps)
+  
 } # if UNDERREG
+
 #...................................................
 # condensed plot for y -> x age misreporting  ----
 # ..................................................
@@ -239,9 +248,9 @@ if (MISREPORT) {
     aes(x=x, y=CDeff, color=true_age) +
     geom_line(aes(y=emp_CDeff, color=CDcolor),
               lwd=3,alpha=.80) +
-    labs(x='Reported Age (x)',
+    labs(x='Reported age (x)',
          y = 'Bias in e0 (years)',
-         color='True Age (y)') +
+         color='True age (y)') +
     theme_carl() +
     scale_y_continuous(limits=YL) +
     scale_x_continuous(limits=c(40,95),breaks=seq(45,95,10)) +
@@ -284,9 +293,12 @@ if (MISREPORT) {
   
   print(G)
   
-  ggsave(here(output_dir,'Fig-misreporting-effects-on-e0.pdf'), plot=G, 
+  ggsave(here(output_dir,'Fig-2-misreporting-effects-on-e0.pdf'), plot=G, 
          height=8, width=8, units='in')
 
+  ggsave(here(output_dir,'Fig-2-misreporting-effects-on-e0.eps'), plot=G, 
+         height=8, width=8, units='in', device=cairo_ps)
+  
 } # if MISREPORT
 
 #......................................
@@ -329,7 +341,7 @@ if (PXY_PROBS) {
     scale_color_manual(values=c(CRhue,AAhue,INhue)) +
     theme(legend.position = 'bottom',
           panel.grid = element_line(linewidth = 0)) +
-    labs(x='Reported Age', y='Cumulative Prob')
+    labs(x='Reported age', y='Cumulative prob')
           
   
   print(G)
@@ -337,6 +349,8 @@ if (PXY_PROBS) {
   ggsave(filename=here(output_dir,paste0('Fig-pxy-examples.pdf')),
          height=6, width=12, units='in')
   
+  ggsave(filename=here(output_dir,paste0('Fig-pxy-examples.eps')),
+         height=6, width=12, units='in', device=cairo_ps)
   
 }
 
@@ -425,13 +439,14 @@ if (DERIVATIVES) {
     theme_carl() +
     theme(legend.key.width = unit(0.8,'in'),
           legend.position='bottom') +
-    theme(strip.text = element_text(size=12)) +
+    theme(legend.text = element_text(size=14)) +
+    theme(strip.text = element_text(size=16, margin=margin(t=0.1,b=0.1,unit='cm'))) +
     labs(x='Age',
          y=expression(paste(Delta,'ln ',m[x])),
-         color   ='Type of Age Error', 
-         linetype='Type of Age Error',
-         size    ='Type of Age Error',
-         alpha   ='Type of Age Error') +
+         color   ='Type of age error', 
+         linetype='Type of age error',
+         size    ='Type of age error',
+         alpha   ='Type of age error') +
     scale_color_manual(values=c(DDhue,CChue,BBhue)) +
     scale_alpha_manual(values=c(1,1,.50)) +
     scale_linetype_manual(values=c('solid','dashed','solid')) +
@@ -444,9 +459,14 @@ if (DERIVATIVES) {
   print(G)
   
   ggsave(filename=here(output_dir,
-            paste0('Fig-deriv-effects-on-mx.pdf')),
+            paste0('Fig-3-deriv-effects-on-mx.pdf')),
          plot=G,height=8, width=15, units='in')
-
+  
+  ggsave(filename=here(output_dir,
+                       paste0('Fig-3-deriv-effects-on-mx.eps')),
+         plot=G,height=8, width=15, units='in', device=cairo_ps)
+  
+  
 } # if DERIVATIVES
 
 #...................................................
@@ -515,7 +535,7 @@ if (NET_ERRORS) {
     geom_hline(yintercept = 0) +
     theme_carl() +
     labs(x='Age', 
-         y = 'Net Percent Error') +
+         y = 'Net percent error') +
     scale_color_manual(values=c('royalblue',CChue)) +
     guides(color='none') +
     scale_y_continuous(limits=c(-25,75),breaks=seq(-20,80,20),
@@ -529,8 +549,11 @@ if (NET_ERRORS) {
   print(G)
   
   
-  ggsave(filename=here(output_dir,paste0('Fig-net-D-and-N-pct-errors-by-age.pdf')),
+  ggsave(filename=here(output_dir,paste0('Fig-4-net-D-and-N-pct-errors-by-age.pdf')),
          height=8, width=12, units='in')
+
+  ggsave(filename=here(output_dir,paste0('Fig-4-net-D-and-N-pct-errors-by-age.eps')),
+         height=8, width=12, units='in', device=cairo_ps)
   
 
 } # if NET_ERRORS
@@ -608,7 +631,7 @@ if (COMPARE_MX_BIAS) {
     geom_smooth(aes(color=pattern),se=FALSE,span=.50, alpha=.80, lwd=1.5) +
     theme_carl() +
     facet_wrap(~pattern) +
-    labs(x='Reported Age',y='Estimated/True Mortality Rate') +
+    labs(x='Reported age',y='Estimated/True mortality rate') +
     scale_color_manual(values=c(CRhue,AAhue,INhue)) +
     guides(color='none')
   
@@ -616,9 +639,11 @@ if (COMPARE_MX_BIAS) {
   print(G)
   
   
-  ggsave(filename=here(output_dir,'Fig-compare-mx-bias.pdf'),
+  ggsave(filename=here(output_dir,'Fig-5-compare-mx-bias.pdf'),
          width=14, height=8, units='in')
   
+  ggsave(filename=here(output_dir,'Fig-5-compare-mx-bias.eps'),
+         width=14, height=8, units='in', device=cairo_ps)
   
 } # if COMPARE_MX_BIAS
 
@@ -656,17 +681,19 @@ if (COMPARE_EX_BIAS) {
   G = G +
     geom_text(aes(x=63.5,y=17.0,label='Costa Rica'),hjust=0,
               size=4.5,fontface='bold',color='black') +
-    geom_text(aes(x=65,y=12.0,label='African-\nAmerican'),hjust=0,
+    geom_text(aes(x=65,y=12.0,label='African\nAmerican'),hjust=0,
               size=4.5,fontface='bold',color='black') +
-    geom_text(aes(x=61.0,y=19.8,label='India Age Misreporting'),hjust=0,
+    geom_text(aes(x=61.0,y=19.8,label='India age misreporting'),hjust=0,
               size=4.5,fontface='bold',color='black') +
     guides(color='none')
   
   print(G)
   
-  ggsave(filename=here(output_dir,'Fig-compare-ex-bias.pdf'),
+  ggsave(filename=here(output_dir,'Fig-6-compare-ex-bias.pdf'),
          width=9, height=8, units='in')
   
+  ggsave(filename=here(output_dir,'Fig-6-compare-ex-bias.eps'),
+         width=9, height=8, units='in', device=cairo_ps)
   
 } # if COMPARE_EX_BIAS
 
@@ -695,7 +722,7 @@ if (COMPARATIVE_EFFECTS) {
   etype = c('Uncounted Deaths',
             'Unenumerated Population',
             'Costa Rica Misreporting',
-            'African-American Misreporting',
+            'African American Misreporting',
             'India Misreporting')
     
   underreg_df = expand_grid(etype=etype[1], pct=0:25) %>% 
@@ -775,7 +802,7 @@ if (COMPARATIVE_EFFECTS) {
          mutate(index = factor(var,
                                levels=c('ex_bias','mx_bias'),
                                labels=paste0(c('e','m'), sel_age)))
-  
+
   
   G = ggplot(data=big) +
     aes(pct, y=bias, color=etype) +
@@ -783,8 +810,9 @@ if (COMPARATIVE_EFFECTS) {
     geom_hline(yintercept = 0) +
     facet_wrap(~index) +
     theme_carl() +
-    labs(x='Fraction of Records with Errors',
-         y='Percent Error') +
+    theme(strip.text = element_text(size=16, margin=margin(t=0.1,b=0.1,unit='cm'))) +
+    labs(x='Fraction of records with errors',
+         y='Percent error') +
     scale_color_manual(values=c(AAhue,CRhue,INhue,DDhue,CChue)) +
     scale_x_continuous(minor_breaks = NULL) +
     guides(color='none') 
@@ -793,26 +821,31 @@ if (COMPARATIVE_EFFECTS) {
 
   txt_df = tribble(
     ~index, ~etype, ~pct, ~bias, ~txt,
-    'e80', 'Unenumerated Population',        18, -20,  'Uncounted\nPopulation',
-    'e80', 'Uncounted Deaths',               18, +21,  'Uncounted\nDeaths',
-    'e80', 'Costa Rica Misreporting',        18, +2  , 'CR Age Errors',
-    'e80', 'India Misreporting',             18, +5.5, 'IN Age Errors',
-    'e80', 'African-American Misreporting',  18, -3  , 'AA Age Errors',
-    'm80', 'Unenumerated Population',        13, +22,  'Uncounted\nPopulation',
-    'm80', 'Uncounted Deaths',               13, -19,  'Uncounted\nDeaths',
-    'm80', 'Costa Rica Misreporting',        18, -1.5, 'CR Age Errors',
-    'm80', 'India Misreporting',             18, -4,   'IN Age Errors',
-    'm80', 'African-American Misreporting',  18, +8  , 'AA Age Errors'
+    'e80', 'Unenumerated Population',        16, -20,  'Uncounted\nPopulation',
+    'e80', 'Uncounted Deaths',               16, +21,  'Uncounted\nDeaths',
+    'e80', 'Costa Rica Misreporting',        16, +2.2  , 'CR Age Errors',
+    'e80', 'India Misreporting',             16, +6, 'IN Age Errors',
+    'e80', 'African American Misreporting',  16, -3.3  , 'AA Age Errors',
+    'm80', 'Unenumerated Population',        10.5, +22,  'Uncounted\nPopulation',
+    'm80', 'Uncounted Deaths',               10.5, -19,  'Uncounted\nDeaths',
+    'm80', 'Costa Rica Misreporting',        18, -1.7, 'CR Age Errors',
+    'm80', 'India Misreporting',             18, -5,   'IN Age Errors',
+    'm80', 'African American Misreporting',  18, +9  , 'AA Age Errors'
   )
   
-  G = G + geom_text(data=txt_df, aes(label=txt), hjust=0, color='black',fontface='bold')
+  G = G + geom_text(data=txt_df, aes(label=txt), 
+                    hjust=0, color='black',
+                    #fontface='bold',
+                    size=7)
 
   
   print(G)
   
-  ggsave(filename=here(output_dir,'Fig-comparative-effect-sizes.pdf'),
+  ggsave(filename=here(output_dir,'Fig-7-comparative-effect-sizes.pdf'),
          width=14, height=8, units='in')
   
+  ggsave(filename=here(output_dir,'Fig-7-comparative-effect-sizes.eps'),
+         width=14, height=8, units='in',device=cairo_ps)
   
   
   
@@ -899,8 +932,11 @@ if (CROSSOVER) {
   
   print(G)
   
-  ggsave(filename=here(output_dir,'Fig-SP-RN-crossover.pdf'),
+  ggsave(filename=here(output_dir,'Fig-8-SP-RN-crossover.pdf'),
          height=8, width=8, units='in')
+
+  ggsave(filename=here(output_dir,'Fig-8-SP-RN-crossover.eps'),
+         height=8, width=8, units='in', device=cairo_ps)
   
 } # if CROSSOVER
 
@@ -1017,14 +1053,16 @@ if (CROSSOVER_ERRORS) {
     scale_y_continuous(limits=c(60,120),breaks=seq(60,120,20)) +
     scale_color_manual(values=c(DDhue,CChue)) +
     scale_size_discrete(range=c(0.6,1.2)) +
-    labs(y='Coverage Level (%)', color='Coverage',
-         lty='Age Errors', size='Coverage')
+    labs(x='Age',y='Coverage level (%)', color='Coverage',
+         lty='Age errors', size='Coverage')
   
   print(G)
   
-  ggsave(filename=here(output_dir,'Fig-errors-for-RN-SP-crossover.pdf'),
+  ggsave(filename=here(output_dir,'Fig-9-errors-for-RN-SP-crossover.pdf'),
          height=8, width=14, units='in')
   
+  ggsave(filename=here(output_dir,'Fig-9-errors-for-RN-SP-crossover.eps'),
+         height=8, width=14, units='in', device=cairo_ps)
   
   # check whether we have really reproduced the RN
   # rates
